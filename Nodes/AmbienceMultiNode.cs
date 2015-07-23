@@ -8,12 +8,20 @@ public class AmbienceMultiNode : AudioNode,IPlayable {
 
 	public Transform followTarget;
 	public float radius;
+	[Space(12)]
+	public float maxDistance = 500;
+	public AudioRolloffMode rollOffMode;
 
 	public override void OnValidate ()
 	{
 		base.OnValidate ();
 		if (radius <= 0) radius = 1;
 		GetChildNodes();
+		foreach (var aNode in audioNodes) {
+			var source = aNode.GetComponent<AudioSource>();
+			source.rolloffMode = rollOffMode;
+			source.maxDistance = maxDistance;
+		}
 	}
 
 	Transform _listener;
@@ -23,6 +31,11 @@ public class AmbienceMultiNode : AudioNode,IPlayable {
 		_listener = FindObjectOfType<AudioListener>().gameObject.transform;
 		transform.position = Vector3.zero;
 		GetChildNodes();
+		foreach (var aNode in audioNodes) {
+			var source = aNode.GetComponent<AudioSource>();
+			source.rolloffMode = rollOffMode;
+			source.maxDistance = maxDistance;
+		}
 	}
 
 	void GetRandomSpherePosRecursive(ref Vector3 position)
@@ -49,8 +62,7 @@ public class AmbienceMultiNode : AudioNode,IPlayable {
 			p.Play(volume * nodevolume, pitch * nodePitch, pan + nodePan, delay + nodeDelay);
 		}
 	}
-
-	[DebugButton]
+	
 	public void Stop ()
 	{
 		isPlaying = false;
@@ -60,11 +72,11 @@ public class AmbienceMultiNode : AudioNode,IPlayable {
 			var p = an as IPlayable;
 			p.Stop();
 		}
-		transform.position = Vector3.zero;
+		/*transform.position = Vector3.zero;
 		foreach (var an in audioNodes)
 		{
 			an.transform.localPosition = Vector3.zero;
-		}
+		}*/
 	}
 
 	#endregion

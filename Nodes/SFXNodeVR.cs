@@ -42,12 +42,11 @@ public class SFXNodeVR : AudioNode, IPlayable, IPlaybackSettings {
 		}
 	}
 	
-	
-	[DebugButton]
+
 	public void Stop ()
 	{
 		StartFadeOut();
-		_ospAudioSource.SetScheduledEndTime(AudioSettings.dspTime + fadeOut);
+		_ospAudioSource.SetScheduledEndTime(fadeOut);
 	}
 	#endregion
 	
