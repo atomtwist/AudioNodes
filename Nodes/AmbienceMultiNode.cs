@@ -9,6 +9,7 @@ public class AmbienceMultiNode : AudioNode,IPlayable {
 	public Transform followTarget;
 	public float radius;
 	[Space(12)]
+	[Header("3D Settings")]
 	public float maxDistance = 500;
 	public AudioRolloffMode rollOffMode;
 
