@@ -77,7 +77,7 @@ public class EventNodesWindow : EditorWindow {
 
 	public static void CreateEventAPI()
 	{ 
-		var path = Application.dataPath + "/Audio/Atomtwist/AudioNodes/EventNode_IDs.cs";
+		var path = Application.dataPath + "/Audio/EventNode_IDs.cs";
 		var events = GameObject.FindObjectsOfType<EventNode>();
 		EditorPrefsX.SetIntArray("currentEventIDs",events.Select(e => e.uniqueID).ToArray());
 		EditorPrefsX.SetStringArray("currentEventNames",events.Select(e => e.name).ToArray());
