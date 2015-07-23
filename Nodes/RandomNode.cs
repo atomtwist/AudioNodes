@@ -34,7 +34,6 @@ public class RandomNode : AudioNode, IPlayable, IPlaybackSettings {
 				n.mixerGroupProperties.mixerGroup = mixerGroupProperties.mixerGroup;
 		}
 		playableNodes[r].Play(volume * nodevolume, pitch * nodePitch, pan + nodePan, delay + nodeDelay);
-		aNodes[r].isPlaying = true;
 	}
 	
 
