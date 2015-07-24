@@ -46,7 +46,7 @@ public class SFXNodeVR : AudioNode, IPlayable, IPlaybackSettings {
 	public void Stop ()
 	{
 		StartFadeOut();
-		_audioSourceVR.SetScheduledEndTime(fadeOut);
+		//_audioSourceVR.SetScheduledEndTime(fadeOut);
 		_audiosource.SetScheduledEndTime(AudioSettings.dspTime + fadeOut);
 	}
 	#endregion
@@ -138,6 +138,17 @@ public class SFXNodeVR : AudioNode, IPlayable, IPlaybackSettings {
 			}
 			
 			data[i] = Mathf.Clamp( data[i] * (float)gain, -1,1) ;			
+		}
+	}
+
+	void Update()
+	{
+		if (Application.isPlaying)
+		{
+			if (fadingOut)
+			{
+				if (gain <= 0) _audioSourceVR.Stop();
+			}
 		}
 	}
 	
