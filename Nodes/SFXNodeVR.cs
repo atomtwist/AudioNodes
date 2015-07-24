@@ -3,7 +3,7 @@ using System.Collections;
 using Kaae;
 
 [RequireComponent(typeof(AudioSource))]
-[RequireComponent(typeof(OSPAudioSource))]
+[RequireComponent(typeof(AudioSourceVR))]
 public class SFXNodeVR : AudioNode, IPlayable, IPlaybackSettings {
 
 	#region IPlaybackSettings implementation
@@ -36,7 +36,7 @@ public class SFXNodeVR : AudioNode, IPlayable, IPlaybackSettings {
 		else
 		{
 			if (Application.isPlaying) 
-				_ospAudioSource.PlayScheduled(AudioSettings.dspTime + delay + nodeDelay);
+				_audioSourceVR.PlayScheduled(AudioSettings.dspTime + delay + nodeDelay);
 			else
 				_audiosource.PlayScheduled(AudioSettings.dspTime + delay + nodeDelay);
 		}
@@ -46,7 +46,8 @@ public class SFXNodeVR : AudioNode, IPlayable, IPlaybackSettings {
 	public void Stop ()
 	{
 		StartFadeOut();
-		_ospAudioSource.SetScheduledEndTime(fadeOut);
+		_audioSourceVR.SetScheduledEndTime(fadeOut);
+		_audiosource.SetScheduledEndTime(AudioSettings.dspTime + fadeOut);
 	}
 	#endregion
 	
@@ -64,7 +65,7 @@ public class SFXNodeVR : AudioNode, IPlayable, IPlaybackSettings {
 	{
 		base.OnValidate ();
 		_audiosource = GetComponent<AudioSource>();
-		_ospAudioSource = GetComponent<OSPAudioSource>();
+		_audioSourceVR = GetComponent<AudioSourceVR>();
 		_audiosource.outputAudioMixerGroup = mixerGroupProperties.mixerGroup;
 		_audiosource.clip = clip;
 		_audiosource.volume = nodevolume;
@@ -77,12 +78,12 @@ public class SFXNodeVR : AudioNode, IPlayable, IPlaybackSettings {
 	}
 	
 	AudioSource _audiosource;
-	OSPAudioSource _ospAudioSource;
+	AudioSourceVR _audioSourceVR;
 	public override void OnEnable()
 	{
 		base.OnEnable();
 		_audiosource = GetComponent<AudioSource>();
-		_ospAudioSource = GetComponent<OSPAudioSource>();
+		_audioSourceVR = GetComponent<AudioSourceVR>();
 		if (clip != null) _clipLength = clip.samples;
 		counter =0;
 	}
