@@ -15,7 +15,7 @@ public class AudioNodesManager : MonoBehaviour {
 	
 	private static AudioNodesManager _instance;
 
-	public static AudioNodesManager instance
+	public static AudioNodesManager  instance
 	{
 		get
 		{
