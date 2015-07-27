@@ -111,6 +111,32 @@ public class AudioNodesManager : MonoBehaviour {
 		newNode.transform.SetParent(selectedObject.transform);
 	}
 
+	//parent
+	static GameObject newNode;
+	[MenuItem("GameObject/AudioNodes/PARENT/Create Multi Node", false, 0)]
+	public static void CreateParentMultiNode(MenuCommand c)
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var selectedTransforms = Selection.GetTransforms(SelectionMode.TopLevel) ;
+		Debug.Log (selectedTransforms[0]);
+		if (selectedTransforms[0] != null && selectedTransforms[0].name == c.context.name)
+		{
+			Debug.Log ("doing");
+			newNode = new GameObject();
+			newNode.AddComponent<MultiNode>();
+			newNode.transform.SetParent(selectedObject.transform.parent);
+			//maybe remove this
+			var audioNode = newNode.GetComponent<AudioNode>();
+			audioNode.exposeToEventnodes = true;
+		}
+		foreach (var s in selectedTransforms) {
+			if (newNode == null)
+				continue;
+			s.parent = newNode.transform;
+			s.GetComponent<AudioNode>().exposeToEventnodes = false;
+		}
+	}
+
 	[MenuItem("GameObject/AudioNodes/AUDIO/Create Random Node", false, 0)]
 	public static void CreateRandomNode()
 	{
