@@ -9,6 +9,7 @@ using UnityEditor;
 [ExecuteInEditMode]
 public class DestroyAfterPlay : MonoBehaviour {
 
+	public bool followGameObject = true;
 	List<AudioSource> audioSources;
 	List<AudioNode> audioNodes;
 

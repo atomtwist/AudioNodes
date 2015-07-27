@@ -4,6 +4,7 @@ using UnityEditor;
 using UnityEditorInternal;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 [CustomEditor(typeof(EventNode),true)]
 [CanEditMultipleObjects]
@@ -49,6 +50,9 @@ public class EventNodeInspector : Editor {
 		if ( property.FindPropertyRelative("actionType").enumValueIndex == (int)EventActionType.Play)
 		{
 			DrawAudioNodePopup(property, rect);
+			rect.y = rect.y + gap;
+			property.FindPropertyRelative("positionBehaviour").enumValueIndex = EditorGUI.Popup(rect, "Position Behaviour", property.FindPropertyRelative("positionBehaviour").enumValueIndex,property.FindPropertyRelative("positionBehaviour").enumDisplayNames);
+			property.FindPropertyRelative("followGameObject").boolValue = !Convert.ToBoolean( property.FindPropertyRelative("positionBehaviour").enumValueIndex);
 		}
 		//stop
 		if ( property.FindPropertyRelative("actionType").enumValueIndex == (int)EventActionType.Stop)

@@ -30,6 +30,12 @@ public enum EventActionScope
 	Global,
 }
 
+public enum PlayPositionBehaviour
+{
+	FollowGameObject,
+	PlayAtPoint,
+}
+
 [System.Serializable]
 public class EventAction
 {
@@ -48,6 +54,8 @@ public class EventAction
 	public float voiceVolume = 1;
 	public float voicePan = 0;
 	public bool bypassEvent ;
+	public PlayPositionBehaviour positionBehaviour;
+	public bool followGameObject;
 
 
 	//TODO: Need an applySettings Method here to apply settings as eventactions before play
@@ -71,6 +79,8 @@ public class EventAction
 			//keep track of what gets played
 			if (nodeObject != null)
 				playingNodes.Add (nodeObject);
+			if (!followGameObject)
+				nodeObject.transform.SetParent(null);
 			break;
 		case EventActionType.Stop  :
 			if (bypassEvent) return;
