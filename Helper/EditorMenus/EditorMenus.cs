@@ -1,0 +1,231 @@
+﻿using UnityEditor;
+using UnityEngine;
+using System.Collections.Generic;
+
+// makes sure that the static constructor is always called in the editor.
+[InitializeOnLoad]
+public class EditorMenus : Editor
+{
+	#region DragAndDropAudioClips
+	static EditorMenus ()
+	{
+		// Adds a callback for when the hierarchy window processes GUI events
+		// for every GameObject in the heirarchy.
+		EditorApplication.hierarchyWindowItemOnGUI += HierarchyWindowItemCallback;
+	}
+
+	static int _hoverID;
+
+	static void HierarchyWindowItemCallback(int pID, Rect pRect)
+	{
+		if (Event.current.type == EventType.DragUpdated)
+		{
+			if (pRect.Contains(Event.current.mousePosition)) 
+			{
+				_hoverID = pID;
+
+			}
+		}
+
+
+		// happens when an acceptable item is released over the GUI window
+		if (Event.current.type == EventType.DragPerform)
+		{
+
+			// get all the drag and drop information ready for processing.
+			DragAndDrop.AcceptDrag();
+
+			
+			// used to emulate selection of new objects.
+			var selectedObjects = new List<GameObject>();
+			
+			// run through each object that was dragged in.
+			foreach (var objectRef in DragAndDrop.objectReferences)
+			{
+				// if the object is the particular asset type...
+				if (objectRef is AudioClip)
+				{
+					// we create a new GameObject using the asset's name.
+					var gameObject = new GameObject(objectRef.name);
+					var dragTarget = EditorUtility.InstanceIDToObject(_hoverID) as GameObject;
+					gameObject.transform.SetParent(dragTarget.transform);
+					
+					// we attach component X, associated with asset X.
+					var sfxNode = gameObject.AddComponent<SFXNode>();
+					
+					// we place asset X within component X.
+					sfxNode.clip = objectRef as AudioClip;
+
+					sfxNode.name = objectRef.name;
+					
+					// add to the list of selected objects.
+					selectedObjects.Add(gameObject);
+				}
+			}
+			
+			// we didn't drag any assets of type AssetX, so do nothing.
+			if (selectedObjects.Count == 0) return;
+			
+			// emulate selection of newly created objects.
+			Selection.objects = selectedObjects.ToArray();
+			
+			// make sure this call is the only one that processes the event.
+			Event.current.Use();
+		}
+		#endregion
+	}
+
+	#region contextMenu
+	//contextMenu
+	//TODO: Make Convert to Context Menu actions
+	
+	[MenuItem("GameObject/AudioNodes/AUDIO/Create SFX Node", false, 0)]
+	public static void CreateSFXNode()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<SFXNode>();
+		newNode.GetComponent<AudioSource>().playOnAwake = false;
+		newNode.transform.SetParent(selectedObject.transform);
+	}
+	
+	[MenuItem("GameObject/AudioNodes/VR/Create VR SFX Node", false, 0)]
+	public static void CreateSFXNodeVR()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<SFXNodeVR>();
+		newNode.GetComponent<AudioSource>().playOnAwake = false;
+		newNode.transform.SetParent(selectedObject.transform);
+	}
+	
+	[MenuItem("GameObject/AudioNodes/VR/Create Ambience Rig Node", false, 0)]
+	public static void CreateAmbienceRigVR()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<AmbienceMultiNode>();
+		newNode.transform.SetParent(selectedObject.transform);
+	}
+	
+	[MenuItem("GameObject/AudioNodes/AUDIO/Create Multi Node", false, 0)]
+	public static void CreateMultiNode()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<MultiNode>();
+		newNode.transform.SetParent(selectedObject.transform);
+	}
+	
+	//parent
+	static GameObject newNode;
+	[MenuItem("GameObject/AudioNodes/PARENT/Create Multi Node", false, 0)]
+	public static void CreateParentMultiNode(MenuCommand c)
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var selectedTransforms = Selection.GetTransforms(SelectionMode.TopLevel) ;
+		Debug.Log (selectedTransforms[0]);
+		if (selectedTransforms[0] != null && selectedTransforms[0].name == c.context.name)
+		{
+			Debug.Log ("doing");
+			newNode = new GameObject();
+			newNode.AddComponent<MultiNode>();
+			newNode.transform.SetParent(selectedObject.transform.parent);
+			//maybe remove this
+			var audioNode = newNode.GetComponent<AudioNode>();
+			audioNode.exposeToEventnodes = true;
+		}
+		foreach (var s in selectedTransforms) {
+			if (newNode == null)
+				continue;
+			s.parent = newNode.transform;
+			s.GetComponent<AudioNode>().exposeToEventnodes = false;
+		}
+	}
+
+	[MenuItem("GameObject/AudioNodes/PARENT/Create Random Node", false, 0)]
+	public static void CreateParentRandomNode(MenuCommand c)
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var selectedTransforms = Selection.GetTransforms(SelectionMode.TopLevel) ;
+		Debug.Log (selectedTransforms[0]);
+		if (selectedTransforms[0] != null && selectedTransforms[0].name == c.context.name)
+		{
+			Debug.Log ("doing");
+			newNode = new GameObject();
+			newNode.AddComponent<RandomNode>();
+			newNode.transform.SetParent(selectedObject.transform.parent);
+			//maybe remove this
+			var audioNode = newNode.GetComponent<AudioNode>();
+			audioNode.exposeToEventnodes = true;
+		}
+		foreach (var s in selectedTransforms) {
+			if (newNode == null)
+				continue;
+			s.parent = newNode.transform;
+			s.GetComponent<AudioNode>().exposeToEventnodes = false;
+		}
+	}
+	
+	[MenuItem("GameObject/AudioNodes/AUDIO/Create Random Node", false, 0)]
+	public static void CreateRandomNode()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<RandomNode>();
+		newNode.transform.SetParent(selectedObject.transform);
+	}
+	
+	[MenuItem("GameObject/AudioNodes/AUDIO/Create Switch Node", false , 0)]
+	public static void CreateSwitchNode()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<SwitchNode>();
+		newNode.transform.SetParent(selectedObject.transform);
+	}
+	
+	[MenuItem("GameObject/AudioNodes/EVENT/Create Event Node", false, 0)]
+	public static void CreateEventNode()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<EventNode>();
+		newNode.transform.SetParent(selectedObject.transform);
+	}
+	
+	[MenuItem("GameObject/AudioNodes/LOGIC/Create Switch State", false, 5)]
+	public static void CreateSwitchState()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<SwitchState>();
+		newNode.transform.SetParent(selectedObject.transform);
+	}
+	
+	//TODO: make this create event from AudioNodes & put it into the right place in hierarchy
+	[MenuItem("GameObject/AudioNodes/AUDIO/Create Emitter Node", false, 0)]
+	public static void CreateEmitterNode()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<EmitterNode>();
+		newNode.transform.SetParent(selectedObject.transform);
+	}
+	
+	
+	
+	//project view
+	[MenuItem("Assets/AudioNodes/Create SFX Node")]
+	public static void AudioClipToSFXNode()
+	{
+		var file = Selection.activeObject;
+		if (file is AudioClip)
+		{
+			Debug.Log ("Snipp");
+			var audioNodeParent = GameObject.Find ("AUDIONODES");
+		}
+	}
+	#endregion
+
+}
