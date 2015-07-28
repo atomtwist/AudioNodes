@@ -62,7 +62,7 @@ public abstract class AudioNode : Node {
 
 	//TODO: Auditioning needs to be its owen Inteface & Push 2D Settings when triggered from Editor
 	[HideInInspector]
-	public List<GameObject> _previewObjects;
+	public List<GameObject> _previewObjects = new List<GameObject>();
 	[DebugButton]
 	public void Audition()
 	{
