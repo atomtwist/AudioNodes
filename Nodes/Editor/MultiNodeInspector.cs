@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEditor;
 
 [CustomEditor(typeof(MultiNode))]
+[CanEditMultipleObjects]
 public class MultiNodeInspector : Editor {
 
 	MultiNode mn;
@@ -17,6 +18,14 @@ public class MultiNodeInspector : Editor {
 	{
 		EditorGUILayout.BeginVertical("Box");
 		EditorGUILayout.Space();
+		if (GUILayout.Button("Audition Parent"))
+		{
+			var parentNode = mn.transform.parent.GetComponent<AudioNode>();
+			if (parentNode != null)
+				parentNode.Audition();
+			else
+				mn.Audition();
+		}
 		if (GUILayout.Button("Audition"))
 		{
 			mn.Audition();

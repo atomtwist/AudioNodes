@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEditor;
 
 [CustomEditor(typeof(RandomNode))]
+[CanEditMultipleObjects]
 public class RandomNodeInspector : Editor {
 
 	RandomNode rn;
@@ -17,6 +18,14 @@ public class RandomNodeInspector : Editor {
 	{
 		EditorGUILayout.BeginVertical("Box");
 		EditorGUILayout.Space();
+		if (GUILayout.Button("Audition Parent"))
+		{
+			var parentNode = rn.transform.parent.GetComponent<AudioNode>();
+			if (parentNode != null)
+				parentNode.Audition();
+			else
+				rn.Audition();
+		}
 		if (GUILayout.Button("Audition"))
 		{
 			rn.Audition();

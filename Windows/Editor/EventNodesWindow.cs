@@ -216,7 +216,10 @@ public class EventNodesWindow : EditorWindow {
 			resize = false;        
 	}
 	
-
+	void OnHierarchyChange()
+	{
+		Repaint ();
+	}
 
 	void DrawEventPreview()
 	{
