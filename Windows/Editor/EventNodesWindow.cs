@@ -186,6 +186,7 @@ public class EventNodesWindow : EditorWindow {
 	Rect cursorChangeRect;
 	
 	void OnEnable(){
+		Repaint();
 		currentScrollViewWidth = this.position.xMin + 140;
 		cursorChangeRect = new Rect(this.position.xMin + 140,toolbarHeight,1f,800);
 	}

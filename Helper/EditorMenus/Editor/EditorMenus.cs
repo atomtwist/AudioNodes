@@ -155,7 +155,9 @@ public class EditorMenus : Editor
 				var eventNode = newNode.AddComponent<EventNode>();
 				EventAction eventAction = new EventAction();
 				eventAction.actionType = EventActionType.Play;
-				eventAction.uniqueAudioNodeID = selectedObject.GetComponent<AudioNode>().uniqueID;
+				var selectedAudioNode = selectedObject.GetComponent<AudioNode>();
+				selectedAudioNode.exposeToEventnodes = true;
+				eventAction.uniqueAudioNodeID = selectedAudioNode.uniqueID;
 				eventAction.followGameObject = true;
 				eventNode.eventAction = new List<EventAction>();
 				eventNode.eventAction.Add(eventAction);

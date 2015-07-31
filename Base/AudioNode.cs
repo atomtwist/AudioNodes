@@ -32,6 +32,7 @@ public abstract class AudioNode : Node {
 #endif
 
 	public bool exposeToEventnodes;
+	public bool mute;
 	[HideInInspector]
 	public int originAudioNodeID;
 	[HideInInspector]

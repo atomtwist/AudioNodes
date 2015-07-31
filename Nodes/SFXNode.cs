@@ -20,6 +20,7 @@ public class SFXNode : AudioNode, IPlayable, IPlaybackSettings {
 	#region IPlayable implementation
 	public void Play (float volume, float pitch, float pan, float delay)
 	{
+		if (mute) return;
 		StartFadeIn();
 		_audiosource.clip = clip;
 		_audiosource.outputAudioMixerGroup = mixerGroupProperties.mixerGroup;
