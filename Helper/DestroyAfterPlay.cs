@@ -15,6 +15,10 @@ public class DestroyAfterPlay : MonoBehaviour {
 
 	void OnEnable()
 	{
+		if (Application.isPlaying)
+		{
+			DontDestroyOnLoad(gameObject);
+		}
 		audioSources = GetComponentsInChildren<AudioSource>().ToList();
 		audioNodes = GetComponentsInChildren<AudioNode>().ToList();
 #if UNITY_EDITOR
