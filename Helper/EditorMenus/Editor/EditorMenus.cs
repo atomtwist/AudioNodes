@@ -52,7 +52,7 @@ public class EditorMenus : Editor
 					
 					// we attach component X, associated with asset X.
 					var sfxNode = gameObject.AddComponent<SFXNode>();
-					
+					gameObject.GetComponent<AudioSource>().playOnAwake = false;
 					// we place asset X within component X.
 					sfxNode.clip = objectRef as AudioClip;
 
