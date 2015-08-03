@@ -84,6 +84,7 @@ public class SFXNodeVR : AudioNode, IPlayable, IPlaybackSettings {
 		base.OnEnable();
 		_audiosource = GetComponent<AudioSource>();
 		_audioSourceVR = GetComponent<AudioSourceVR>();
+		_audiosource.playOnAwake = false;
 		if (clip != null) _clipLength = clip.samples;
 		counter =0;
 	}

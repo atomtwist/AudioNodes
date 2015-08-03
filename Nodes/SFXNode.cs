@@ -75,6 +75,7 @@ public class SFXNode : AudioNode, IPlayable, IPlaybackSettings {
 	{
 		base.OnEnable();
 		_audiosource = GetComponent<AudioSource>();
+		_audiosource.playOnAwake = false;
 		if (clip != null) _clipLength = clip.samples;
 		counter =0;
 	}
