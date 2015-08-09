@@ -49,15 +49,26 @@ public class EditorMenus : Editor
 					var gameObject = new GameObject(objectRef.name);
 					var dragTarget = EditorUtility.InstanceIDToObject(_hoverID) as GameObject;
 					gameObject.transform.SetParent(dragTarget.transform);
-					
-					// we attach component X, associated with asset X.
-					var sfxNode = gameObject.AddComponent<SFXNode>();
-					gameObject.GetComponent<AudioSource>().playOnAwake = false;
-					// we place asset X within component X.
-					sfxNode.clip = objectRef as AudioClip;
 
-					sfxNode.name = objectRef.name;
-					
+
+					// we attach component X, associated with asset X.
+					if (AudioNodesSettings.VRMode)
+					{
+						var sfxNode = gameObject.AddComponent<SFXNodeVR>();
+						// we place asset X within component X.
+						sfxNode.clip = objectRef as AudioClip;
+						
+						sfxNode.name = objectRef.name;
+					}
+					else
+					{
+						var sfxNode = gameObject.AddComponent<SFXNode>();
+						// we place asset X within component X.
+						sfxNode.clip = objectRef as AudioClip;
+						
+						sfxNode.name = objectRef.name;
+					}
+					gameObject.GetComponent<AudioSource>().playOnAwake = false;
 					// add to the list of selected objects.
 					selectedObjects.Add(gameObject);
 				}

@@ -12,6 +12,12 @@ public static class EventIDData
 	public 	static int[] currentEventIDs;
 }
 
+public static class AudioNodesSettings
+{
+	public static bool VRMode;
+}
+
+
 public class EventNodesWindow : EditorWindow {
 
 
@@ -38,7 +44,7 @@ public class EventNodesWindow : EditorWindow {
 	static GameObject audioNodeManager;
 	static string status;
 	
-	
+
 	void DrawToolBar()
 	{
 		var toolbarStyle = new GUIStyle(EditorStyles.toolbar);
@@ -67,8 +73,10 @@ public class EventNodesWindow : EditorWindow {
 
 		if (GUILayout.Button("Create ID's", toolbarButtonStyle))
 			CreateEventAPI();
+
 		GUILayout.FlexibleSpace();
 		GUI.contentColor = Color.white;
+		AudioNodesSettings.VRMode = GUILayout.Toggle(AudioNodesSettings.VRMode ,"VR Mode", toolbarButtonStyle);
 		GUILayout.EndHorizontal();
 	}
 	#endregion
