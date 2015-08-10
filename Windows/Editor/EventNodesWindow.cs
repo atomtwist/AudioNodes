@@ -85,7 +85,8 @@ public class EventNodesWindow : EditorWindow {
 
 	public static void CreateEventAPI()
 	{ 
-		var path = Application.dataPath + "/Audio/EventNode_IDs.cs";
+		var prefabName = AudioNodesManager.instance.gameObject.name;
+		var path = Application.dataPath + "/Audio/" + prefabName + "_IDs.cs";
 		var events = GameObject.FindObjectsOfType<EventNode>();
 		EditorPrefsX.SetIntArray("currentEventIDs",events.Select(e => e.uniqueID).ToArray());
 		EditorPrefsX.SetStringArray("currentEventNames",events.Select(e => e.name).ToArray());
@@ -95,7 +96,7 @@ public class EventNodesWindow : EditorWindow {
 		using (StreamWriter outfile = 
 		       new StreamWriter(path))
 		{
-			outfile.WriteLine(" public class " + "AN" + " {");
+			outfile.WriteLine(" public class " + prefabName + " {");
 			foreach (var tag in tags) {
 				outfile.WriteLine(" public class " + tag.ToUpper() + " {");
 				foreach (var e in events)
