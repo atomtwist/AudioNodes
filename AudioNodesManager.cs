@@ -58,14 +58,7 @@ public class AudioNodesManager : MonoBehaviour {
 	}
 	
 
-	public static void SetSwitch(string switchStateName)
-	{
-		var switchNodes = GameObject.FindObjectsOfType<SwitchNode>();
-		foreach (var n in switchNodes)
-		{
-			ExecuteEvents.Execute<ISwitchable>(n.gameObject,null, (x,y) => x.SetSwitch(switchStateName) );
-		}
-	}
+
 
 
 

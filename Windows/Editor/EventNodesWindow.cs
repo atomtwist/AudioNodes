@@ -88,7 +88,7 @@ public class EventNodesWindow : EditorWindow {
 		var prefabName = AudioNodesManager.instance.gameObject.name;
 		var path = Application.dataPath + "/Audio/" + prefabName + "_IDs.cs";
 		var events = GameObject.FindObjectsOfType<EventNode>();
-		EditorPrefsX.SetIntArray("currentEventIDs",events.Select(e => e.uniqueID).ToArray());
+		EditorPrefsX.SetIntArray("currentSwitchGroupIDs",events.Select(e => e.uniqueID).ToArray());
 		EditorPrefsX.SetStringArray("currentEventNames",events.Select(e => e.name).ToArray());
 		var tags = events.Select (e => e.tag).ToList();
 		tags = tags.GroupBy(t => t).Select(e => e.First()).ToList();

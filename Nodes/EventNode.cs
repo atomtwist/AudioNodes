@@ -10,6 +10,8 @@ using UnityEngine.EventSystems;
 
 public class EventNode : Node {
 
+
+
 	//tagging system for previewing
 	[HideInInspector]
 	public string tag;
@@ -31,8 +33,16 @@ public class EventNode : Node {
 	[HideInInspector]
 	public List<EventAction> eventAction;
 	public bool exposeForPreview = true;
-		
-	public void PostEvent(int uniqueEventID)
+	[HideInInspector]
+	public int switchGroupID;
+	[HideInInspector]
+	public GameObject switchGroupGameObject;
+	[HideInInspector]
+	public int defaultSwitchStateID;
+	[HideInInspector]
+	public string defaultSwitchStateName;
+
+	public virtual void PostEvent(int uniqueEventID)
 	{
 		if (uniqueID != uniqueEventID) return;
 		foreach (var e in eventAction)
@@ -42,7 +52,7 @@ public class EventNode : Node {
 	}
 	
 
-	public void PostEvent(string eventName)
+	public virtual void PostEvent(string eventName)
 	{
 		if (eventName != name) return;
 		foreach (var e in eventAction)
@@ -51,7 +61,7 @@ public class EventNode : Node {
 		}
 	}
 	
-	public void PostEvent(int uniqueEventID, GameObject targetGameObject)
+	public virtual void PostEvent(int uniqueEventID, GameObject targetGameObject)
 	{
 		if (uniqueID != uniqueEventID) return;
 		//this might not be very fast TODO: Find a static gameobject to play from
@@ -66,7 +76,7 @@ public class EventNode : Node {
 	}
 	
 
-	public void PostEvent(string eventName, GameObject targetGameObject)
+	public virtual void PostEvent(string eventName, GameObject targetGameObject)
 	{
 		if (eventName != name) return;
 		//this might not be very fast TODO: Find a static gameobject to play from
@@ -78,7 +88,7 @@ public class EventNode : Node {
 		}
 	}
 	
-	public void AuditionEvent()
+	public virtual void AuditionEvent()
 	{
 		if (eventAction == null) return;
 		foreach (var e in eventAction)
@@ -89,7 +99,7 @@ public class EventNode : Node {
 		}
 	}
 	
-	public void StopAudition()
+	public virtual void StopAudition()
 	{
 		foreach (var e in eventAction) {
 			foreach (var p in e.playingNodes) {

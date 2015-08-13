@@ -21,7 +21,7 @@ public enum EventActionType
 	SetPitch,
 	SetPan,
 	TriggerEvent,
-	SetSwitch,
+	SwitchSelect,
 }
 
 public enum EventActionScope
@@ -47,8 +47,6 @@ public class EventAction
 	public AudioMixerSnapshot mixerSnapshot;
 	public float mixerSnapshotTransitionTime;
 	public GameObject eventTarget;
-    public string switchStateName;
-	public int switchStateID;
 	public List<GameObject> playingNodes;
 	public float voicePitch = 1;
 	public float voiceVolume = 1;
@@ -56,6 +54,12 @@ public class EventAction
 	public bool bypassEvent ;
 	public PlayPositionBehaviour positionBehaviour;
 	public bool followGameObject;
+	// switch
+	public int uniqueSwitchGroupID;
+	public GameObject switchGroupGameObject;
+	public string switchStateName;
+	public int switchStateID;
+
 
 
 	//TODO: Need an applySettings Method here to apply settings as eventactions before play
@@ -125,6 +129,7 @@ public class EventAction
 				}
 			}
 			break;
+
 		case EventActionType.StopMixerGroup  :
 			if (bypassEvent) return;
 			if (actionScope == EventActionScope.Gameobject)
@@ -156,10 +161,12 @@ public class EventAction
 				}
 			}
 			break;
+
 		case EventActionType.TriggerMixerSnapshot :
 			if (bypassEvent) return;
 			mixerSnapshot.TransitionTo(mixerSnapshotTransitionTime);
 			break;
+
 		case EventActionType.TriggerEvent :
 			if (bypassEvent) return;
 			var eventNode = selectedNodeGameObject.GetComponent<EventNode>();
@@ -174,14 +181,7 @@ public class EventAction
 				}
 			}
 		break;
-		case EventActionType.SetSwitch  :
-			if (bypassEvent) return;
-			var switchNodes = GameObject.FindObjectsOfType<SwitchNode>();
-			foreach (var n in switchNodes)
-			{
-				ExecuteEvents.Execute<ISwitchable>(n.gameObject,null, (x,y) => x.SetSwitch(switchStateName) );
-			}
-			break;
+		
 		case EventActionType.SetVolume :
 			if (bypassEvent) return;
 			var nodeObjectss = targetGameObject.GetComponentsInChildren<AudioNode>();

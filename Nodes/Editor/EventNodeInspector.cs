@@ -79,17 +79,10 @@ public class EventNodeInspector : Editor {
 			rect.y += gap;
 			EditorGUI.PropertyField(rect, property.FindPropertyRelative("eventTarget"));
 		}
-		//set switch
-		if ( property.FindPropertyRelative("actionType").enumValueIndex == (int)EventActionType.SetSwitch)
-		{
-			DrawSwitchNodePopup(property, rect);
-			rect.y += gap;
-			DrawSwitchStatePopup(property, rect);
-		}
+
 		//set Volume
 		if ( property.FindPropertyRelative("actionType").enumValueIndex == (int)EventActionType.SetVolume)
 		{
-			DrawSwitchNodePopup(property, rect);
 			DrawAudioNodePopup(property, rect);
 			rect.y += gap;
 			DrawVolumeSettings(property,rect);
@@ -97,7 +90,6 @@ public class EventNodeInspector : Editor {
 		//set Pitch
 		if ( property.FindPropertyRelative("actionType").enumValueIndex == (int)EventActionType.SetPitch)
 		{
-			DrawSwitchNodePopup(property, rect);
 			DrawAudioNodePopup(property, rect);
 			rect.y += gap;
 			DrawPitchSettings(property,rect);
@@ -105,10 +97,18 @@ public class EventNodeInspector : Editor {
 		//set Pan
 		if ( property.FindPropertyRelative("actionType").enumValueIndex == (int)EventActionType.SetPan)
 		{
-			DrawSwitchNodePopup(property, rect);
 			DrawAudioNodePopup(property, rect);
 			rect.y += gap;
 			DrawPanSettings(property,rect);
+		}
+		//switch
+		if ( property.FindPropertyRelative("actionType").enumValueIndex == (int)EventActionType.SwitchSelect)
+		{
+			//DrawSwitchGroupPopup(property, rect);
+			//rect.y += gap;
+			DrawSwitchStatePopup(property, rect);
+			rect.y += gap;
+			DrawEventNodePopup(property, rect);
 		}
 	}
 
@@ -148,36 +148,71 @@ public class EventNodeInspector : Editor {
 		}
 	}
 
-	void DrawSwitchNodePopup(SerializedProperty property, Rect rect)
+	//switch
+/*	void DrawSwitchGroupPopup(SerializedProperty property, Rect rect)
 	{
 		EditorGUI.BeginChangeCheck();
-		var switchNodes = GameObject.FindObjectsOfType<SwitchNode>().ToList();
+		var switchGroups = GameObject.FindObjectsOfType<SwitchGroup>().ToList();
 		//return if no audioNodes
-		if (switchNodes.Count == 0 || switchNodes == null)
+		if (switchGroups.Count == 0 || switchGroups == null)
 			return;
 		//var audioNodeID = property.FindPropertyRelative ("uniqueAudioNodeID").intValue;
-		var switchNodeNames = switchNodes.Select(n => n.name).ToArray();
-		var switchNodeIDList = switchNodes.Select (n => n.uniqueID).ToList();
-		var selectedIndex = EditorGUI.Popup( rect, "Switch Node ",switchNodeIDList.IndexOf(property.FindPropertyRelative ("uniqueAudioNodeID").intValue), switchNodeNames);
+		var switchGroupNames = switchGroups.Select(n => n.name).ToArray();
+		var switchGroupIDList = switchGroups.Select (n => n.uniqueID).ToList();
+		var selectedIndex = EditorGUI.Popup( rect, "Switch Group ",switchGroupIDList.IndexOf(property.FindPropertyRelative ("uniqueSwitchGroupID").intValue), switchGroupNames);
 		selectedIndex = Mathf.Clamp(selectedIndex,0,int.MaxValue);
-		var selectedNode = switchNodes[selectedIndex];
-		property.FindPropertyRelative("selectedNodeGameObject").objectReferenceValue = selectedNode.gameObject;
+		var selectedNode = switchGroups[selectedIndex];
+		property.FindPropertyRelative("switchGroupGameObject").objectReferenceValue = selectedNode.gameObject;
 		if( EditorGUI.EndChangeCheck()) 
 		{
-			property.FindPropertyRelative ("uniqueAudioNodeID").intValue = selectedNode.uniqueID;
+			property.FindPropertyRelative ("uniqueSwitchGroupID").intValue = selectedNode.uniqueID;
+		}
+	}*/
+
+	void DrawSwitchGroupPopup()
+	{
+		EditorGUI.BeginChangeCheck();
+		var switchGroups = GameObject.FindObjectsOfType<SwitchGroup>().ToList();
+		//return if no audioNodes
+		if (switchGroups.Count == 0 || switchGroups == null)
+			return;
+		//var audioNodeID = property.FindPropertyRelative ("uniqueAudioNodeID").intValue;
+		var switchGroupNamesList = switchGroups.Select(n => n.name).ToList();
+		switchGroupNamesList.Add ("None");
+		var switchGroupNames = switchGroupNamesList.ToArray();
+		var switchGroupIDList = switchGroups.Select (n => n.uniqueID).ToList();
+		switchGroupIDList.Add(0);
+		var selectedIndex = EditorGUILayout.Popup("Switch Group ",switchGroupIDList.IndexOf(eNode.switchGroupID), switchGroupNames);
+		selectedIndex = Mathf.Clamp(selectedIndex,0,int.MaxValue);
+		if (selectedIndex < switchGroups.Count)
+		{
+			var selectedNode = switchGroups[selectedIndex];
+			eNode.switchGroupGameObject = selectedNode.gameObject;
+			if( EditorGUI.EndChangeCheck()) 
+			{
+				eNode.switchGroupID = selectedNode.uniqueID;
+			}
+		}
+		else
+		{
+			eNode.switchGroupGameObject = null;
+			if( EditorGUI.EndChangeCheck()) 
+			{
+				eNode.switchGroupID = 0;
+			}
 		}
 	}
-
+	
 	List<SwitchState> switchStates = new List<SwitchState>();
 	void DrawSwitchStatePopup(SerializedProperty property, Rect rect)
 	{
 		EditorGUI.BeginChangeCheck();
 		//check fro switchNodes
-		if (property.FindPropertyRelative("selectedNodeGameObject").objectReferenceValue == null)
+		if (eNode.switchGroupGameObject == null)
 			return;
 		//make a list of switchstates in 1st Level children
 		switchStates.Clear();
-		var switchNodeGameObject = (GameObject)property.FindPropertyRelative("selectedNodeGameObject").objectReferenceValue;
+		var switchNodeGameObject = eNode.switchGroupGameObject;
 		foreach (Transform t in switchNodeGameObject.transform)
 		{
 			var switchState = t.GetComponent<SwitchState>() ;
@@ -201,6 +236,39 @@ public class EventNodeInspector : Editor {
 		}
 	}
 
+
+	void DrawDefaultSwitchStatePopup()
+	{
+		EditorGUI.BeginChangeCheck();
+		//check fro switchNodes
+		if (eNode.switchGroupGameObject == null)
+			return;
+		//make a list of switchstates in 1st Level children
+		switchStates.Clear();
+		var switchNodeGameObject = eNode.switchGroupGameObject;
+		foreach (Transform t in switchNodeGameObject.transform)
+		{
+			var switchState = t.GetComponent<SwitchState>() ;
+			if (switchState != null)
+				switchStates.Add(switchState);
+		}
+		//return if no audioNodes
+		if (switchStates.Count == 0 || switchStates == null)
+			return;
+		//var audioNodeID = property.FindPropertyRelative ("uniqueAudioNodeID").intValue;
+		var switchStateNames = switchStates.Select(n => n.name).ToArray();
+		var switchStateIDList = switchStates.Select (n => n.uniqueID).ToList();
+		var selectedIndex = EditorGUILayout.Popup( "Default Switch State ",switchStateIDList.IndexOf(eNode.defaultSwitchStateID), switchStateNames);
+		selectedIndex = Mathf.Clamp(selectedIndex,0,int.MaxValue);
+		var selectedNode = switchStates[selectedIndex];
+		eNode.defaultSwitchStateName = switchStateNames[selectedIndex];
+		//property.FindPropertyRelative("switchStateObject").objectReferenceValue = selectedNode.gameObject;
+		if( EditorGUI.EndChangeCheck()) 
+		{
+			eNode.defaultSwitchStateID = selectedNode.uniqueID;
+		}
+	}
+	
 	void DrawEventNodePopup(SerializedProperty property, Rect rect)
 	{
 		EditorGUI.BeginChangeCheck();
@@ -259,6 +327,9 @@ public class EventNodeInspector : Editor {
 	public override void OnInspectorGUI ()
 	{
 		base.OnInspectorGUI ();
+		DrawSwitchGroupPopup();
+		if (eNode.switchGroupGameObject != null)
+			DrawDefaultSwitchStatePopup();
 		EditorGUILayout.Space();
 		serializedObject.Update();
 		list.elementHeight = 23.333333f * numberOfItems;
