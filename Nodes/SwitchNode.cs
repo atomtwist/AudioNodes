@@ -21,7 +21,11 @@ public class SwitchNode : EventNode {
 			if (eventNode.eventAction == null) continue;
 			foreach (var e in eventNode.eventAction)
 			{
-				e.ExecuteEventAction(AudioNodesManager.instance.gameObject);
+				if (eventNode.switchGroupGameObject == null) return;
+				if(eventNode.defaultSwitchStateID == eventNode.switchGroupGameObject.GetComponent<SwitchGroup>().currentSwitchStateID)
+				{
+					e.ExecuteEventAction(AudioNodesManager.instance.gameObject);
+				}
 			}
 		}
 	}
@@ -34,7 +38,11 @@ public class SwitchNode : EventNode {
 			if (eventNode.eventAction == null) continue;
 			foreach (var e in eventNode.eventAction)
 			{
-				e.ExecuteEventAction(targetGameObject);
+				if (eventNode.switchGroupGameObject == null) return;
+				if(eventNode.defaultSwitchStateID == eventNode.switchGroupGameObject.GetComponent<SwitchGroup>().currentSwitchStateID)
+				{
+					e.ExecuteEventAction(targetGameObject);
+				}
 			}
 		}
 	}
@@ -46,7 +54,7 @@ public class SwitchNode : EventNode {
 			foreach (var e in eventNode.eventAction)
 			{
 				if (eventNode.switchGroupGameObject == null) return;
-				if(eventNode.defaultSwitchStateID == eventNode.switchGroupGameObject.GetComponent<SwitchGroup>().defaultSwitchStateID)
+				if(eventNode.defaultSwitchStateID == eventNode.switchGroupGameObject.GetComponent<SwitchGroup>().currentSwitchStateID)
 				{
 					e.ExecuteEventAction(eventNode.gameObject);
 				}

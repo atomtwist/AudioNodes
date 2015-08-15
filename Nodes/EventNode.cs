@@ -19,14 +19,15 @@ public class EventNode : Node {
 	public override void OnEnable ()
 	{
 		base.OnEnable ();
-		if (transform.parent != null)
+		if (transform.parent != null && transform.parent.GetComponent<SwitchNode>() == null)
 			tag = transform.parent.name;
 	}
 
 	public override void OnValidate ()
 	{
 		base.OnValidate ();
-		tag = transform.parent.name;
+		if (transform.parent != null && transform.parent.GetComponent<SwitchNode>() == null)
+			tag = transform.parent.name;	
 	}
 
 	[SerializeField]

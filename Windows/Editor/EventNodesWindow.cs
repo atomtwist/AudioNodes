@@ -88,7 +88,17 @@ public class EventNodesWindow : EditorWindow {
 		var prefabName = AudioNodesManager.instance.gameObject.name;
 		var path = Application.dataPath + "/Audio/" + prefabName + "_IDs.cs";
 		var events = GameObject.FindObjectsOfType<EventNode>();
-		EditorPrefsX.SetIntArray("currentSwitchGroupIDs",events.Select(e => e.uniqueID).ToArray());
+		//adding SwitchGroups & States
+		var switchGroups = GameObject.FindObjectsOfType<SwitchGroup>();
+		var switchStates = GameObject.FindObjectsOfType<SwitchState>();
+
+		EditorPrefsX.SetIntArray("currentSwitchGroupIDs",switchGroups.Select(e => e.uniqueID).ToArray());
+		EditorPrefsX.SetStringArray("currentSwitchGroupNames",switchGroups.Select(e => e.name).ToArray());
+
+		EditorPrefsX.SetIntArray("currentSwitchStateIDs",switchStates.Select(e => e.uniqueID).ToArray());
+		EditorPrefsX.SetStringArray("currentSwitchStateNames",switchStates.Select(e => e.name).ToArray());
+
+		EditorPrefsX.SetIntArray("currentEventIDs",events.Select(e => e.uniqueID).ToArray());
 		EditorPrefsX.SetStringArray("currentEventNames",events.Select(e => e.name).ToArray());
 		var tags = events.Select (e => e.tag).ToList();
 		tags = tags.GroupBy(t => t).Select(e => e.First()).ToList();
@@ -111,6 +121,28 @@ public class EventNodesWindow : EditorWindow {
 				}
 				outfile.WriteLine("}" );
 			}
+
+			//implement switchLogic here
+			outfile.WriteLine(" public class SWITCHES {");
+			foreach (var sg in switchGroups)
+			{
+				if (sg == null) continue;
+				outfile.WriteLine(" public class " + sg.name.ToUpper() + " {");
+				foreach (var ss in sg.switchStates)
+				{
+					if (ss == null) continue;
+					var noSpaces = ss.name.Replace(" ", "_");
+					noSpaces = noSpaces.Replace("-","_");
+					noSpaces = noSpaces.Replace("  ", "_");
+					noSpaces = noSpaces.Replace("   ", "_");
+					outfile.WriteLine("public static int " + noSpaces + " = " + ss.uniqueID + ";" );
+				}
+
+				outfile.WriteLine("}" );
+			}
+			outfile.WriteLine("}" );
+
+
 			outfile.WriteLine("}" );
 		}//File written
 		Debug.Log ("parameter file written to " + path);
@@ -160,6 +192,34 @@ public class EventNodesWindow : EditorWindow {
 			if ( !isIDEqual || !isNameEqual || eventIDs.Length != EditorPrefsX.GetIntArray("currentEventIDs").Length)
 				IDsChanged = true;
 			if ( isIDEqual && isNameEqual && eventIDs.Length == EditorPrefsX.GetIntArray("currentEventIDs").Length)
+				IDsChanged = false;
+		}
+
+		//switch groups 
+		var switchGroups = GameObject.FindObjectsOfType<SwitchGroup>();
+		var switchGroupIDs = switchGroups.Select(e => e.uniqueID).ToArray();
+		var switchGroupNames = switchGroups.Select(e => e.name).ToArray();
+		if (EditorPrefsX.GetIntArray("currentSwitchGroupIDs") != null)
+		{
+			var isIDEqual = new HashSet<int>(switchGroupIDs).SetEquals(EditorPrefsX.GetIntArray("currentSwitchGroupIDs"));
+			var isNameEqual = new HashSet<string>(switchGroupNames).SetEquals(EditorPrefsX.GetStringArray("currentSwitchGroupNames"));
+			if ( !isIDEqual || !isNameEqual || switchGroupIDs.Length != EditorPrefsX.GetIntArray("currentSwitchGroupIDs").Length)
+				IDsChanged = true;
+			if ( isIDEqual && isNameEqual && switchGroupIDs.Length == EditorPrefsX.GetIntArray("currentSwitchGroupIDs").Length)
+				IDsChanged = false;
+		}
+
+		//switch states
+		var switchStates = GameObject.FindObjectsOfType<SwitchState>();
+		var switchStateIDs = switchStates.Select(e => e.uniqueID).ToArray();
+		var switchStateNames = switchStates.Select(e => e.name).ToArray();
+		if (EditorPrefsX.GetIntArray("currentSwitchStateIDs") != null)
+		{
+			var isIDEqual = new HashSet<int>(switchStateIDs).SetEquals(EditorPrefsX.GetIntArray("currentSwitchStateIDs"));
+			var isNameEqual = new HashSet<string>(switchStateNames).SetEquals(EditorPrefsX.GetStringArray("currentSwitchStateNames"));
+			if ( !isIDEqual || !isNameEqual || switchStateIDs.Length != EditorPrefsX.GetIntArray("currentSwitchStateIDs").Length)
+				IDsChanged = true;
+			if ( isIDEqual && isNameEqual && switchStateIDs.Length == EditorPrefsX.GetIntArray("currentSwitchStateIDs").Length)
 				IDsChanged = false;
 		}
 

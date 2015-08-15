@@ -12,6 +12,17 @@ public class SwitchGroupInspector : Editor {
 	void OnEnable()
 	{
 		g = target as SwitchGroup;
+		EditorApplication.hierarchyWindowChanged += OnHierarchyChanged;
+	}
+
+	void OnDisable()
+	{
+		EditorApplication.hierarchyWindowChanged -= OnHierarchyChanged;
+	}
+
+	void OnHierarchyChanged ()
+	{
+		UpdateSwitchStates();
 	}
 
 	List<SwitchState> switchStates = new List<SwitchState>();
@@ -31,17 +42,24 @@ public class SwitchGroupInspector : Editor {
 		//return if no audioNodes
 		if (switchStates.Count == 0 || switchStates == null)
 			return;
-		//var audioNodeID = property.FindPropertyRelative ("uniqueAudioNodeID").intValue;
-		var switchStateNames = switchStates.Select(n => n.name).ToArray();
+		//it doesnt like if items have the same name
+		var switchStateNames = switchStates.Select(n => n.name.ToString()).ToArray();
 		var switchStateIDList = switchStates.Select (n => n.uniqueID).ToList();
 		var selectedIndex = EditorGUILayout.Popup( "Default Switch State ",switchStateIDList.IndexOf(g.defaultSwitchStateID), switchStateNames);
 		selectedIndex = Mathf.Clamp(selectedIndex,0,int.MaxValue);
 		var selectedNode = switchStates[selectedIndex];
 		g.defaultSwitchStateName = switchStateNames[selectedIndex];
-		//property.FindPropertyRelative("switchStateObject").objectReferenceValue = selectedNode.gameObject;
 		if( EditorGUI.EndChangeCheck()) 
 		{
 			g.defaultSwitchStateID = selectedNode.uniqueID;
+		}
+	}
+
+	void UpdateSwitchStates()
+	{
+		if (switchStates != null || switchStates.Count > 0)
+		{
+			g.switchStates = switchStates;
 		}
 	}
 
@@ -49,6 +67,7 @@ public class SwitchGroupInspector : Editor {
 	{
 		base.OnInspectorGUI ();
 		DrawDefaultSwitchStatePopup();
+		UpdateSwitchStates();
 		EditorUtility.SetDirty(target);
 	}
 

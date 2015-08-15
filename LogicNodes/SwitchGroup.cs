@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SwitchGroup : Node {
 
@@ -9,11 +10,13 @@ public class SwitchGroup : Node {
 	public string defaultSwitchStateName;
 	[HideInInspector]
 	public int currentSwitchStateID;
+	[HideInInspector]
+	public List <SwitchState> switchStates;
 
 	public override void OnEnable ()
 	{
 		base.OnEnable ();
-
+		currentSwitchStateID = defaultSwitchStateID;
 	}
 
 }

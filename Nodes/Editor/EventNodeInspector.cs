@@ -35,8 +35,20 @@ public class EventNodeInspector : Editor {
 			DrawMixerActions(element, rect);
 		};
 		eNode = target as EventNode;
+		EditorApplication.hierarchyWindowChanged += OnHierarchyChanged;
+
 	}
 
+	void OnDisable()
+	{
+		EditorApplication.hierarchyWindowChanged -= OnHierarchyChanged;
+	}
+
+	void OnHierarchyChanged ()
+	{
+		GetSwitchGroupFromParent();
+		Debug.Log ("ChangedbRo");
+	}
 
 	void DrawEventActionPopup(SerializedProperty property, Rect rect)
 	{
@@ -282,6 +294,12 @@ public class EventNodeInspector : Editor {
 			foreach (var n in item.eventAction) {
 				if (n.uniqueAudioNodeID == eNode.uniqueID)
 					eventNodes.Remove(item);
+				//prevent parent switchNode to get triggered
+			 	var parentSwitchNode = eNode.transform.parent.GetComponent<SwitchNode>();
+				if (parentSwitchNode != null)
+				{
+					eventNodes.Remove(parentSwitchNode);
+				}
 			}
 		}
 		var eventNodeNames = eventNodes.Select(n => n.name).ToArray();
@@ -306,6 +324,25 @@ public class EventNodeInspector : Editor {
 		}
 	}
 
+	void GetSwitchGroupFromParent()
+	{
+		if (eNode == null) return;
+		var parentSwitchNode = eNode.transform.parent.GetComponent<SwitchNode>();
+		if(parentSwitchNode != null)
+		{
+			eNode.switchGroupID = parentSwitchNode.switchGroupID;
+			eNode.switchGroupGameObject = parentSwitchNode.switchGroupGameObject;
+
+			//if group has states, pick the first state...maybe
+		} 
+		else
+		{
+			eNode.switchGroupID = 0;
+			eNode.switchGroupGameObject = null;
+		}
+	}
+
+
 
 
 	void AuditionButtons()
@@ -327,7 +364,7 @@ public class EventNodeInspector : Editor {
 	public override void OnInspectorGUI ()
 	{
 		base.OnInspectorGUI ();
-		DrawSwitchGroupPopup();
+		//DrawSwitchGroupPopup();
 		if (eNode.switchGroupGameObject != null)
 			DrawDefaultSwitchStatePopup();
 		EditorGUILayout.Space();
