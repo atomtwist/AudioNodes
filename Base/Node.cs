@@ -38,7 +38,7 @@ public abstract class Node : MonoBehaviour {
 		transform.localPosition = Vector3.zero;
 	}
 
-	void Reset()
+	public virtual void Reset()
 	{
 		CreateUniqueID();
 	}

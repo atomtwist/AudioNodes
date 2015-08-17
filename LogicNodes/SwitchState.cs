@@ -4,8 +4,11 @@ using System.Linq;
 
 public class SwitchState : Node {
 
-	void Reset()
+
+
+	public override void Reset ()
 	{
+		base.Reset ();
 		if (transform.parent == null)
 			return;
 		var parentSwitchGroup = transform.parent.GetComponent<SwitchGroup>();
@@ -13,6 +16,5 @@ public class SwitchState : Node {
 			return;
 		parentSwitchGroup.switchStates.Clear();
 		parentSwitchGroup.switchStates = parentSwitchGroup.GetComponentsInChildren<SwitchState>().ToList();
-	}
-
+	}	
 }

@@ -31,9 +31,11 @@ public class AudioNodesManager : MonoBehaviour {
 	public AudioNodeEventPreview eventNodePreview;
 
 	List<EventNode> eventNodes;
+	List<SwitchState> switchStates;
 	void OnEnable()
 	{
 		eventNodes = GameObject.FindObjectsOfType<EventNode>().ToList();
+		switchStates = GameObject.FindObjectsOfType<SwitchState>().ToList();
 		if (!Application.isPlaying) transform.position = FindObjectOfType<AudioListener>().transform.position;
 	}
 	
@@ -55,6 +57,12 @@ public class AudioNodesManager : MonoBehaviour {
 		{
 			e.PostEvent(uniqueID, targetObject);
 		}
+	}
+
+	public static void SetSwitch(int uniqueID)
+	{
+		var s = AudioNodesManager.instance.switchStates;
+		s.FirstOrDefault(ss => ss.uniqueID == uniqueID).transform.parent.GetComponent<SwitchGroup>().currentSwitchStateID = uniqueID;
 	}
 	
 

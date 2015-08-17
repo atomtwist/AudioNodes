@@ -8,9 +8,10 @@ public class SwitchGroup : Node {
 	public int defaultSwitchStateID;
 	[HideInInspector]
 	public string defaultSwitchStateName;
-	[HideInInspector]
+	//[HideInInspector]
 	public int currentSwitchStateID;
-	[HideInInspector]
+	//[HideInInspector]
+	[SerializeField]
 	public List <SwitchState> switchStates;
 
 	public override void OnEnable ()
