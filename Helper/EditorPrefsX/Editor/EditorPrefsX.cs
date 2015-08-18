@@ -98,8 +98,16 @@ public static class EditorPrefsX
 		sb.Append(intArray[intArray.Length - 1]);
 		
 		try { EditorPrefs.SetString(key, sb.ToString()); }
-		catch (Exception e) { return false; }
+		catch (Exception e) { 
+			Debug.Log (e.Message);
+			return false; 
+		}
 		return true;
+	}
+
+	public static void DeleteIntArray(string key)
+	{
+		EditorPrefs.DeleteKey(key);
 	}
 	
 	/// <summary>

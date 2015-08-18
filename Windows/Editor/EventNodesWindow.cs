@@ -92,14 +92,39 @@ public class EventNodesWindow : EditorWindow {
 		var switchGroups = GameObject.FindObjectsOfType<SwitchGroup>();
 		var switchStates = GameObject.FindObjectsOfType<SwitchState>();
 
-		EditorPrefsX.SetIntArray("currentSwitchGroupIDs",switchGroups.Select(e => e.uniqueID).ToArray());
-		EditorPrefsX.SetStringArray("currentSwitchGroupNames",switchGroups.Select(e => e.name).ToArray());
+		if (switchGroups.Length == 0)
+		{
+			EditorPrefs.DeleteKey("currentSwitchGroupIDs");
+			EditorPrefs.DeleteKey("currentSwitchGroupNames");
+		}
+		else
+		{
+			EditorPrefsX.SetIntArray("currentSwitchGroupIDs",switchGroups.Select(e => e.uniqueID).ToArray());
+			EditorPrefsX.SetStringArray("currentSwitchGroupNames",switchGroups.Select(e => e.name).ToArray());
+		}
 
-		EditorPrefsX.SetIntArray("currentSwitchStateIDs",switchStates.Select(e => e.uniqueID).ToArray());
-		EditorPrefsX.SetStringArray("currentSwitchStateNames",switchStates.Select(e => e.name).ToArray());
+		if (switchStates.Length == 0)
+		{
+			EditorPrefs.DeleteKey("currentSwitchStateIDs");
+			EditorPrefs.DeleteKey("currentSwitchStateNames");
 
-		EditorPrefsX.SetIntArray("currentEventIDs",events.Select(e => e.uniqueID).ToArray());
-		EditorPrefsX.SetStringArray("currentEventNames",events.Select(e => e.name).ToArray());
+		}
+		else
+		{
+			EditorPrefsX.SetIntArray("currentSwitchStateIDs",switchStates.Select(e => e.uniqueID).ToArray());
+			EditorPrefsX.SetStringArray("currentSwitchStateNames",switchStates.Select(e => e.name).ToArray());
+		}
+
+		if (events.Length == 0)
+		{
+			EditorPrefs.DeleteKey("currentEventIDs");
+			EditorPrefs.DeleteKey("currentEventNames");
+		}
+		else
+		{
+			EditorPrefsX.SetIntArray("currentEventIDs",events.Select(e => e.uniqueID).ToArray());
+			EditorPrefsX.SetStringArray("currentEventNames",events.Select(e => e.name).ToArray());
+		}
 
 		var tags = events.Select (e => e.tag).ToList();
 		tags = tags.GroupBy(t => t).Select(e => e.First()).ToList();
@@ -206,34 +231,16 @@ public class EventNodesWindow : EditorWindow {
 			var switchStateIDisEqual = new HashSet<int>(switchStateIDs).SetEquals(EditorPrefsX.GetIntArray("currentSwitchStateIDs"));
 			var switchStateNameIsEqual = new HashSet<string>(switchStateNames).SetEquals(EditorPrefsX.GetStringArray("currentSwitchStateNames"));
 
-			if (switchGroups.Length == 0)
-			{
-				if ( !isIDEqual || !isNameEqual || eventIDs.Length != EditorPrefsX.GetIntArray("currentEventIDs").Length)
-					IDsChanged = true;
-				if ( isIDEqual && isNameEqual && eventIDs.Length == EditorPrefsX.GetIntArray("currentEventIDs").Length)
-					IDsChanged = false;
-			}
+			Debug.Log (EditorPrefsX.GetIntArray("currentSwitchStateIDs").Length + " // " + EditorPrefsX.GetIntArray("currentSwitchStateIDs").Length);
 
-			if (switchGroups.Length > 0 && switchStates.Length == 0)
-			{
-				if ( !isIDEqual || !isNameEqual || eventIDs.Length != EditorPrefsX.GetIntArray("currentEventIDs").Length
-				    && !switchGroupIDisEqual || !switchGroupNameisEqual || switchGroupIDs.Length != EditorPrefsX.GetIntArray("currentSwitchGroupIDs").Length)
-					IDsChanged = true;
-				if ( isIDEqual && isNameEqual && eventIDs.Length == EditorPrefsX.GetIntArray("currentEventIDs").Length
-				    && switchGroupIDisEqual && switchGroupNameisEqual && switchGroupIDs.Length == EditorPrefsX.GetIntArray("currentSwitchGroupIDs").Length)
-					IDsChanged = false;
-			}
-			if (switchGroups.Length > 0 && switchStates.Length > 0)
-			{
-				if ( !isIDEqual || !isNameEqual || eventIDs.Length != EditorPrefsX.GetIntArray("currentEventIDs").Length
-				    && !switchGroupIDisEqual || !switchGroupNameisEqual || switchGroupIDs.Length != EditorPrefsX.GetIntArray("currentSwitchGroupIDs").Length
-				    && !switchStateIDisEqual || !switchStateNameIsEqual || switchStateIDs.Length != EditorPrefsX.GetIntArray("currentSwitchStateIDs").Length)
-					IDsChanged = true;
-				if ( isIDEqual && isNameEqual && eventIDs.Length == EditorPrefsX.GetIntArray("currentEventIDs").Length
-				    && switchGroupIDisEqual && switchGroupNameisEqual && switchGroupIDs.Length == EditorPrefsX.GetIntArray("currentSwitchGroupIDs").Length
-				    && switchStateIDisEqual && switchStateNameIsEqual && switchStateIDs.Length == EditorPrefsX.GetIntArray("currentSwitchStateIDs").Length)
-					IDsChanged = false;
-			}
+			if ( !isIDEqual || !isNameEqual || eventIDs.Length != EditorPrefsX.GetIntArray("currentEventIDs").Length
+			    && !switchGroupIDisEqual || !switchGroupNameisEqual || switchGroupIDs.Length != EditorPrefsX.GetIntArray("currentSwitchGroupIDs").Length
+			    && !switchStateIDisEqual || !switchStateNameIsEqual || switchStateIDs.Length != EditorPrefsX.GetIntArray("currentSwitchStateIDs").Length)
+				IDsChanged = true;
+			if ( isIDEqual && isNameEqual && eventIDs.Length == EditorPrefsX.GetIntArray("currentEventIDs").Length
+			    && switchGroupIDisEqual && switchGroupNameisEqual && switchGroupIDs.Length == EditorPrefsX.GetIntArray("currentSwitchGroupIDs").Length
+			    && switchStateIDisEqual && switchStateNameIsEqual && switchStateIDs.Length == EditorPrefsX.GetIntArray("currentSwitchStateIDs").Length)
+				IDsChanged = false;
 			//TODO: fix the stupid bug here
 
 		}
