@@ -19,14 +19,14 @@ public class EventNode : Node {
 	public override void OnEnable ()
 	{
 		base.OnEnable ();
-		if (transform.parent != null && transform.parent.GetComponent<SwitchNode>() == null)
+		if (transform.parent != null)
 			tag = transform.parent.name;
 	}
 
 	public override void OnValidate ()
 	{
 		base.OnValidate ();
-		if (transform.parent != null && transform.parent.GetComponent<SwitchNode>() == null)
+		if (transform.parent != null)
 			tag = transform.parent.name;	
 	}
 
@@ -34,14 +34,7 @@ public class EventNode : Node {
 	[HideInInspector]
 	public List<EventAction> eventAction;
 	public bool exposeForPreview = true;
-	[HideInInspector]
-	public int switchGroupID;
-	[HideInInspector]
-	public GameObject switchGroupGameObject;
-	[HideInInspector]
-	public int defaultSwitchStateID;
-	[HideInInspector]
-	public string defaultSwitchStateName;
+
 
 	public virtual void PostEvent(int uniqueEventID)
 	{
