@@ -37,7 +37,9 @@ public class EventNodeInspector : Editor {
 			if (element.FindPropertyRelative("bypassEvent").boolValue)
 			{
 				rect.y = rect.y + gap;
+				GUI.color = Color.green;
 				DrawSwitchStatePopup(element, rect);
+				GUI.color = Color.white;
 			}
 		};
 		eNode = target as EventNode;
@@ -168,12 +170,15 @@ public class EventNodeInspector : Editor {
 		if (switchStates.Count == 0 || switchStates == null)
 			return;
 		//var audioNodeID = property.FindPropertyRelative ("uniqueAudioNodeID").intValue;
-		var switchStateNamesList = switchStates.Select(n => n.transform.parent.name.ToUpper() + " : " + n.name).ToList();
+		var switchStateNamesList = switchStates.Select(n => n.transform.parent.name + " : " + n.name.ToUpper()).ToList();
 		switchStateNamesList.Add ("None");
 		var switchStateNames = switchStateNamesList.ToArray();
 		var switchStateIDList = switchStates.Select (n => n.uniqueID).ToList();
 		switchStateIDList.Add(0);
-		var selectedIndex = EditorGUI.Popup( rect, "Condition",switchStateIDList.IndexOf(property.FindPropertyRelative ("switchStateID").intValue), switchStateNames);
+		//set color to red if bypassed
+		if (property.FindPropertyRelative("switchStateName").stringValue == "None")
+			GUI.color = Color.red;
+		var selectedIndex = EditorGUI.Popup( rect, "Switch Condition",switchStateIDList.IndexOf(property.FindPropertyRelative ("switchStateID").intValue), switchStateNames);
 		selectedIndex = Mathf.Clamp(selectedIndex,0,int.MaxValue);
 		if (selectedIndex < switchStates.Count)
 		{

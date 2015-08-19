@@ -10,7 +10,7 @@ public class SwitchGroup : Node {
 	public string defaultSwitchStateName;
 	//[HideInInspector]
 	public int currentSwitchStateID;
-	//[HideInInspector]
+	[HideInInspector]
 	[SerializeField]
 	public List <SwitchState> switchStates;
 
