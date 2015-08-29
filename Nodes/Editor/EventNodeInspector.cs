@@ -6,12 +6,45 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 
+
 [CustomEditor(typeof(EventNode),true)]
 [CanEditMultipleObjects]
 public class EventNodeInspector : Editor {
 
 	ReorderableList list;
 	EventNode eNode;
+
+	// TODO: Fuck this !!
+	void NodeContextMenuCallback (object obj) {
+		Debug.Log ("Selected: " + obj);
+		var sObj = obj as System.Object as SerializedProperty;
+		Debug.Log (sObj.FindPropertyRelative("actionType").objectReferenceValue);
+
+	}
+
+	public void DrawContextMenu(Rect rect, SerializedProperty element)
+	{
+		Event e = Event.current;
+		Vector2 mousePos = e.mousePosition;
+		if (rect.Contains (mousePos))
+		{
+			if (e.button == 0)
+			{
+			}
+			else
+				//SelectedNode = child;
+				if (e.button == 1)
+			{
+				GenericMenu menu = new GenericMenu ();
+				menu.AddItem (new GUIContent ("Copy"), false, NodeContextMenuCallback, element);
+				menu.AddItem (new GUIContent ("Copy All"), false, NodeContextMenuCallback, "Copy All");
+				menu.AddSeparator ("");
+				menu.AddItem (new GUIContent ("Paste"), false, NodeContextMenuCallback, "Paste");
+				menu.ShowAsContext ();
+				e.Use();
+			}
+		}
+	}
 
 	public float gap = 16;
 	float numberOfItems;
@@ -27,6 +60,8 @@ public class EventNodeInspector : Editor {
 		(Rect rect, int index, bool isActive, bool isFocused) => {
 			//get property
 			var element = list.serializedProperty.GetArrayElementAtIndex(index);
+			//Context Menu
+			DrawContextMenu(rect, element);
 			rect = new Rect(rect.x,rect.y, rect.width,EditorGUIUtility.singleLineHeight);
 			//layout shit
 			DrawEventActionPopup(element, rect);
@@ -47,7 +82,6 @@ public class EventNodeInspector : Editor {
 	void OnHierarchyChanged ()
 	{
 		GetSwitchGroupFromParent();
-		Debug.Log ("ChangedbRo");
 	}
 
 	void DrawEventActionPopup(SerializedProperty property, Rect rect)
@@ -360,6 +394,8 @@ public class EventNodeInspector : Editor {
 		EditorGUILayout.Space();
 		EditorGUILayout.EndVertical();
 	}
+
+
 
 	public override void OnInspectorGUI ()
 	{
