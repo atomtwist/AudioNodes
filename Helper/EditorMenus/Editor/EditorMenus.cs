@@ -151,10 +151,35 @@ public class EditorMenus : Editor
 		newNode.gameObject.name = "Random Node";
 		Selection.activeObject = newNode;
 	}
+
+	[MenuItem("GameObject/AudioNodes/SWITCHES/Create SwitchGroup %#g", false, 0)]
+	public static void CreateSwitchGroup()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<SwitchGroup>();
+		newNode.transform.SetParent(selectedObject.transform);
+		newNode.name = "Switch Group";
+		newNode.gameObject.name = "Switch Group";
+		Selection.activeObject = newNode;
+	}
+
+	[MenuItem("GameObject/AudioNodes/SWITCHES/Create SwitchGroup %#t", false, 0)]
+	public static void CreateSwitchState()
+	{
+		var selectedObject = Selection.activeObject as GameObject;
+		var newNode = new GameObject();
+		newNode.AddComponent<SwitchState>();
+		newNode.transform.SetParent(selectedObject.transform);
+		newNode.name = "Switch State";
+		newNode.gameObject.name = "Switch State";
+		Selection.activeObject = newNode;
+	}
 	
+
 	
 	[MenuItem("GameObject/AudioNodes/EVENT/Create Event Node %#e", false, 0)]
-	public static void CreateEventNode()
+	public static void CreateSwitchNode()
 	{
 		var selectedObjects = Selection.gameObjects;
 		foreach (var selectedObject in selectedObjects )

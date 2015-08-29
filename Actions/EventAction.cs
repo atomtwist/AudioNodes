@@ -55,10 +55,9 @@ public class EventAction
 	public PlayPositionBehaviour positionBehaviour;
 	public bool followGameObject;
 	// switch
-	public int uniqueSwitchGroupID;
-	public GameObject switchGroupGameObject;
 	public string switchStateName;
 	public int switchStateID;
+	public GameObject switchStateGameObject;
 
 
 
@@ -71,7 +70,14 @@ public class EventAction
 		switch (actionType)
 		{
 		case EventActionType.Play : 
-			if (bypassEvent) return;
+			//handle conditions
+			if (bypassEvent) 
+			{
+				if (switchStateGameObject == null)
+					return;
+				if (switchStateGameObject.GetComponentInParent<SwitchGroup>().currentSwitchStateID != switchStateID) 
+					return;
+			}
 			//create instance of audioEvent
 			nodeObject = GameObject.Instantiate<GameObject>(selectedNodeGameObject);
 			//TODO: make eventInterface to update the settings
@@ -86,8 +92,16 @@ public class EventAction
 			if (!followGameObject)
 				nodeObject.transform.SetParent(null);
 			break;
+
 		case EventActionType.Stop  :
-			if (bypassEvent) return;
+			//handle conditions
+			if (bypassEvent) 
+			{
+				if (switchStateGameObject == null)
+					return;
+				if (switchStateGameObject.GetComponentInParent<SwitchGroup>().currentSwitchStateID != switchStateID) 
+					return;
+			}
 			if (actionScope == EventActionScope.Gameobject)
 			{
 				var nodeObjects = targetGameObject.GetComponentsInChildren<AudioNode>();
@@ -110,8 +124,16 @@ public class EventAction
 				}
 			}
 			break;
+
 		case EventActionType.StopAll  :
-			if (bypassEvent) return;
+			//handle conditions
+			if (bypassEvent) 
+			{
+				if (switchStateGameObject == null)
+					return;
+				if (switchStateGameObject.GetComponentInParent<SwitchGroup>().currentSwitchStateID != switchStateID) 
+					return;
+			}
 			if (actionScope == EventActionScope.Gameobject)
 			{
 				var nodeObjects = targetGameObject.GetComponentsInChildren<AudioNode>();
@@ -131,7 +153,14 @@ public class EventAction
 			break;
 
 		case EventActionType.StopMixerGroup  :
-			if (bypassEvent) return;
+			//handle conditions
+			if (bypassEvent) 
+			{
+				if (switchStateGameObject == null)
+					return;
+				if (switchStateGameObject.GetComponentInParent<SwitchGroup>().currentSwitchStateID != switchStateID) 
+					return;
+			}
 			if (actionScope == EventActionScope.Gameobject)
 			{
 				//find all childgroups
@@ -163,7 +192,14 @@ public class EventAction
 			break;
 
 		case EventActionType.TriggerMixerSnapshot :
-			if (bypassEvent) return;
+			//handle conditions
+			if (bypassEvent) 
+			{
+				if (switchStateGameObject == null)
+					return;
+				if (switchStateGameObject.GetComponentInParent<SwitchGroup>().currentSwitchStateID != switchStateID) 
+					return;
+			}
 			mixerSnapshot.TransitionTo(mixerSnapshotTransitionTime);
 			break;
 
@@ -183,7 +219,14 @@ public class EventAction
 		break;
 		
 		case EventActionType.SetVolume :
-			if (bypassEvent) return;
+			//handle conditions
+			if (bypassEvent) 
+			{
+				if (switchStateGameObject == null)
+					return;
+				if (switchStateGameObject.GetComponentInParent<SwitchGroup>().currentSwitchStateID != switchStateID) 
+					return;
+			}
 			var nodeObjectss = targetGameObject.GetComponentsInChildren<AudioNode>();
 			foreach (var n in nodeObjectss)
 			{
@@ -197,8 +240,16 @@ public class EventAction
 				
 			}
 			break;
+
 		case EventActionType.SetPitch :
-			if (bypassEvent) return;
+			//handle conditions
+			if (bypassEvent) 
+			{
+				if (switchStateGameObject == null)
+					return;
+				if (switchStateGameObject.GetComponentInParent<SwitchGroup>().currentSwitchStateID != switchStateID) 
+					return;
+			}
 			var nodeObjects = targetGameObject.GetComponentsInChildren<AudioNode>();
 			foreach (var n in nodeObjects)
 			{
@@ -211,8 +262,16 @@ public class EventAction
 				
 			}
 			break;
+
 		case EventActionType.SetPan :
-			if (bypassEvent) return;
+			//handle conditions
+			if (bypassEvent) 
+			{
+				if (switchStateGameObject == null)
+					return;
+				if (switchStateGameObject.GetComponentInParent<SwitchGroup>().currentSwitchStateID != switchStateID) 
+					return;
+			}
 			var nodeObjectsss = targetGameObject.GetComponentsInChildren<AudioNode>();
 			foreach (var n in nodeObjectsss)
 			{
