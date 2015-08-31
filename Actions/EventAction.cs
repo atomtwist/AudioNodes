@@ -204,7 +204,14 @@ public class EventAction
 			break;
 
 		case EventActionType.TriggerEvent :
-			if (bypassEvent) return;
+			//handle conditions
+			if (bypassEvent) 
+			{
+				if (switchStateGameObject == null)
+					return;
+				if (switchStateGameObject.GetComponentInParent<SwitchGroup>().currentSwitchStateID != switchStateID) 
+					return;
+			}
 			var eventNode = selectedNodeGameObject.GetComponent<EventNode>();
 			eventNode.PostEvent(uniqueAudioNodeID,eventTarget);
 			//keep track of playing nodes
