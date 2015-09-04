@@ -12,6 +12,7 @@ public class AmbienceMultiNode : AudioNode,IPlayable {
 	[Header("3D Settings")]
 	public float maxDistance = 500;
 	public AudioRolloffMode rollOffMode;
+	public float yOffset;
 
 	public override void OnValidate ()
 	{
@@ -94,6 +95,7 @@ public class AmbienceMultiNode : AudioNode,IPlayable {
 	{
 		if (!isPlaying) return;
 		transform.position = _listener.position;
+		transform.position = new Vector3(transform.position.x,transform.position.y + yOffset,transform.position.z);
 	}
 
 
