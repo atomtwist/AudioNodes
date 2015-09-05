@@ -57,6 +57,8 @@ public class AudioNodeData
 	private List<string> _childrenIds = new List<string>();
 	[System.NonSerialized]
 	public List<AudioNodeData> Children = new List<AudioNodeData>();
+	[System.NonSerialized]
+	public AudioNodeData Parent;
 
 	public void Initialize() {
 		ChildId =  System.Guid.NewGuid().ToString();
@@ -66,11 +68,17 @@ public class AudioNodeData
 		if(!_childrenIds.Any())
 			return;
 		Children = allnodes.Where (n => _childrenIds.Any (c => c == n.ChildId)).ToList();
+		Children.ForEach(c => c.Parent = this);
 	}
 
 	public void AddChild(AudioNodeData d) {
 		_childrenIds.Add (d.ChildId);
 		Children.Add (d);
+		d.SetParent(this);
+	}
+
+	public void SetParent(AudioNodeData parent) {
+		Parent = parent;
 	}
 
 	public void DeleteYourselfAndYourFuckingFamily(List<AudioNodeData> allnodes) {
@@ -128,14 +136,7 @@ public class AudioNodeAsset : ScriptableObject, ISerializationCallbackReceiver {
 	public List<AudioNodeData> AllTheNodes = new List<AudioNodeData>();
 	[SerializeField]
 	public List<AudioNodeData> Roots = new List<AudioNodeData>();
-	
 
-	public void AddChildNode()
-	{
-		var n = new AudioNodeData();
-		n.Initialize();
-		AllTheNodes.Add (n);
-	}
 
 	public void NewRootNode(NodeType t) {
 		var n = new AudioNodeData();

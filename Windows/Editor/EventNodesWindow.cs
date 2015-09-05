@@ -738,7 +738,10 @@ public class EventNodesWindow : EditorWindow {
 
 				if (e.button == 0 && hasKeyboardAndMouseFocus && !shiftPressed)
 				{
-					SelectedNode = child;
+					if(child.Parent != null)
+						SelectedNode = child.Parent;
+					else
+						SelectedNode = child;
 					SelectedNodes.Clear();
 					SelectedNodes.Add (SelectedNode);
 					GUI.FocusControl(null);
