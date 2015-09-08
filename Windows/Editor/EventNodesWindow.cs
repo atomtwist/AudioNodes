@@ -678,6 +678,8 @@ public class EventNodesWindow : EditorWindow {
 		NavigateTreeWithKeys(drawnItems);
 	}
 
+	bool selectionActive;
+	AudioNodeData activeSelectionStartNode;
 	void DrawTreeElement(AudioNodeData child, int indent)
 	{
 		ColorSelectedNode(child);
@@ -724,12 +726,50 @@ public class EventNodesWindow : EditorWindow {
 					{
 						var prevSelected = SelectedNode;
 						SelectedNode = child;
+						if (prevSelected != SelectedNode && !selectionActive)
+						{
+							selectionActive = true;
+							activeSelectionStartNode = prevSelected;
+						}
+		
+						if (selectionActive)
+						{
+							//get rootNode of current Nodetype
+							var rootNode = NodeAsshat.Roots.FirstOrDefault(n => n.nodeType == toolbarOptions);
+							var currentDrawnNodes = rootNode.Children.RecursiveSelect(b => b.Children).ToList();
+							List<AudioNodeData> listy = new List<AudioNodeData>();
+							foreach (var node in currentDrawnNodes) {
+								if(!node.foldOut && node.Children.Count > 0) 
+									listy.AddRange(node.Children);
+							} 
+							currentDrawnNodes.RemoveAll(listy.Contains);
+							Debug.Log (currentDrawnNodes.Count);
+							
+							if (currentDrawnNodes.IndexOf(activeSelectionStartNode) <  currentDrawnNodes.IndexOf(SelectedNode))
+								selectDirection = SelectDirection.DOWN;
+							else
+								selectDirection = SelectDirection.UP;
+							
+							
+							if (selectDirection == SelectDirection.DOWN)
+							{
+								var  tempSelectedNodes = MinMaxBetween (currentDrawnNodes, currentDrawnNodes.IndexOf(activeSelectionStartNode), currentDrawnNodes.IndexOf(SelectedNode));
+								SelectedNodes.AddRange(tempSelectedNodes.Where(x => !SelectedNodes.Any(y => y == x )));
+							}
+							if (selectDirection == SelectDirection.UP)
+							{
+								var tempSelectedNodes = MinMaxBetween (currentDrawnNodes, currentDrawnNodes.IndexOf(SelectedNode), currentDrawnNodes.IndexOf(activeSelectionStartNode));
+								SelectedNodes.AddRange(tempSelectedNodes.Where(x => !SelectedNodes.Any(y => y == x )));
+							}
+						}
+						else
+						{
+							//SelectedNodes.AddRange(drawnItems.GetRange());
+							SelectedNodes.Add(SelectedNode);
+						}
 
-						drawnItems.ForEach(Debug.Log);
 
 
-						//SelectedNodes.AddRange(drawnItems.GetRange());
-						SelectedNodes.Add(SelectedNode);
 					}
 					e.Use();
 				}
@@ -738,10 +778,8 @@ public class EventNodesWindow : EditorWindow {
 
 				if (e.button == 0 && hasKeyboardAndMouseFocus && !shiftPressed)
 				{
-					if(child.Parent != null)
-						SelectedNode = child.Parent;
-					else
-						SelectedNode = child;
+					selectionActive = false;
+					SelectedNode = child;
 					SelectedNodes.Clear();
 					SelectedNodes.Add (SelectedNode);
 					GUI.FocusControl(null);
